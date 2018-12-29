@@ -2,17 +2,24 @@ import * as fs from "fs";
 import * as readline from "readline";
 
 const inputPath = "data/day1.txt";
-
-const res = fs
+const numbers = fs
   .readFileSync(inputPath)
   .toString()
-  .split("\n")
-  .reduce((val, el) => val + (parseInt(el, 10) || 0), 0);
-console.log(res);
+  .split(/\n+/)
+  .map(el => parseInt(el, 10) || 0);
 
-const rl = readline.createInterface(fs.createReadStream(inputPath));
-let sum = 0;
-rl.on("line", line => {
-  sum += parseInt(line, 10) || 0;
-});
-rl.on("close", () => console.log(sum));
+// 1a
+const res = numbers.reduce((val, el) => val + el, 0);
+console.log("1a:", res);
+
+let curSum = 0;
+const sums = new Set([0]);
+for (let i = 0; ; i++) {
+  const val = numbers[i % numbers.length];
+  curSum += val;
+  if (sums.has(curSum)) {
+    console.log("1b:", curSum);
+    break;
+  }
+  sums.add(curSum);
+}
