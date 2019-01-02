@@ -12,6 +12,7 @@ const numbers = fs
 const res = numbers.reduce((val, el) => val + el, 0);
 console.log("1a:", res);
 
+// 1b
 let curSum = 0;
 const sums = new Set([0]);
 for (let i = 0; ; i++) {
