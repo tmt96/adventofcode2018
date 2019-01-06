@@ -1,10 +1,7 @@
-import * as fs from "fs";
+import * as util from "./util";
 
 const inputPath = "data/day3.txt";
-const lines = fs
-  .readFileSync(inputPath)
-  .toString()
-  .split("\n");
+const lines = util.readFileToLines(inputPath);
 
 const claims = lines.map(line => (line.match(/\d+/g) || []).map(Number));
 const claimInverseMap = new Map<string, number[]>();

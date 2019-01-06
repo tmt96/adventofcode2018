@@ -1,5 +1,5 @@
-import * as assert from "assert";
-import * as fs from "fs";
+import "./collection";
+import * as util from "./util";
 
 const inputPath = "data/day2.txt";
 
@@ -41,7 +41,7 @@ function similarPart(first: string, second: string): string {
 
 function findId(ids: string[]): string {
   for (const id of ids) {
-    for (const otherId of ids.filter(curId => curId !== id)) {
+    for (const otherId of ids.removeAll(id)) {
       const res = similarPart(id, otherId);
       if (res.length === id.length - 1) {
         return res;
@@ -51,11 +51,8 @@ function findId(ids: string[]): string {
   return "";
 }
 
-let lines = fs
-  .readFileSync(inputPath)
-  .toString()
-  .split("\n");
-lines = lines.slice(0, lines.length + 1);
+let lines = util.readFileToLines(inputPath);
+lines = lines.take(-1);
 // 2a
 console.log(getHashCode(lines));
 // 2b

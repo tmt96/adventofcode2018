@@ -1,11 +1,8 @@
-import * as fs from "fs";
-import * as readline from "readline";
+import * as util from "./util";
 
 const inputPath = "data/day1.txt";
-const numbers = fs
-  .readFileSync(inputPath)
-  .toString()
-  .split(/\n+/)
+const numbers = util
+  .readFileToLines(inputPath)
   .map(el => parseInt(el, 10) || 0);
 
 // 1a
