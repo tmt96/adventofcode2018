@@ -1,10 +1,9 @@
-import * as util from "./util";
 import "./collection";
+import * as util from "./util";
 
 const inputPath = "data/day4.txt";
 const lines = util.readFileToLines(inputPath);
 lines.sort();
-console.log(lines);
 
 let currentGuard: number;
 let startSleepTime: number;
@@ -53,8 +52,11 @@ const mostOftenSleepMinute = guardMap.get(sleepyGuard)!.max()![0];
 console.log(sleepyGuard * mostOftenSleepMinute);
 
 // part b
-const chosenGuard = guardMap.maxBy(
-  (guard, minuteCount) => (minuteCount.max() || [0, 0])[1]
-);
-const maxMinute = chosenGuard![1].max();
-console.log(chosenGuard![0] * maxMinute![0]);
+const guardToMaxMinuteMap = guardMap.map((g, minuteCount) => [
+  g,
+  minuteCount.max() || [0, 0]
+]);
+const [guard, maxMinute] = guardToMaxMinuteMap.maxBy(
+  (_, minuteCount) => minuteCount[1]
+) || [0, [0, 0]];
+console.log(guard * maxMinute[0]);

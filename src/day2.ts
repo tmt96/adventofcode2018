@@ -11,11 +11,11 @@ function charCounter(s: string): Map<string, number> {
   return map;
 }
 
-function getHashCode(lines: string[]): number {
+function getHashCode(lineList: string[]): number {
   let letterTwo = 0;
   let letterThree = 0;
 
-  for (const line of lines) {
+  for (const line of lineList) {
     const map = charCounter(line);
     const counts = Array.from(map.values());
     if (counts.indexOf(2) > -1) {
