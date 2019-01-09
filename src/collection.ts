@@ -2,6 +2,9 @@ export {};
 
 declare global {
   interface Array<T> {
+    min(): T | undefined;
+    max(): T | undefined;
+
     append(item: T): T[];
     removeAll(item: T): T[];
     skip(count: number): T[];
@@ -18,6 +21,18 @@ declare global {
     map<T, U>(func: (key: K, value: V) => [T, U]): Map<T, U>;
     reduce<R>(func: (key: K, value: V, prevValue: R) => R, acc: R): R;
   }
+}
+
+if (!Array.prototype.min) {
+  Array.prototype.min = function<T>(this: T[]): T | undefined {
+    return this.reduce((item, value) => (item < value ? item : value));
+  };
+}
+
+if (!Array.prototype.max) {
+  Array.prototype.max = function<T>(this: T[]): T | undefined {
+    return this.reduce((item, value) => (item > value ? item : value));
+  };
 }
 
 if (!Array.prototype.append) {
