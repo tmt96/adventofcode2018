@@ -7,7 +7,6 @@ function manhattanDistances(fst: number[], snd: number[]) {
 
 const inputPath = "./data/day6.txt";
 const lines = util.readFileToLines(inputPath);
-
 const locations = lines.map(line =>
   line.split(", ").map(s => parseInt(s || "0", 10) || 0)
 );

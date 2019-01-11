@@ -40,12 +40,12 @@ function parseLine(line: string) {
 lines.forEach(parseLine);
 
 // part a
-const guardTotalMinuteMap = guardMap.map((guard, minuteCount) => {
+const guardTotalMinuteMap = guardMap.map((g, minuteCount) => {
   const totalMinuteCount = minuteCount.reduce(
     (_, count, prev) => count + prev,
     0
   );
-  return [guard, totalMinuteCount];
+  return [g, totalMinuteCount];
 });
 const sleepyGuard = guardTotalMinuteMap.max()![0];
 const mostOftenSleepMinute = guardMap.get(sleepyGuard)!.max()![0];
