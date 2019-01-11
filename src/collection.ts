@@ -9,6 +9,7 @@ declare global {
     removeAll(item: T): T[];
     skip(count: number): T[];
     take(count: number): T[];
+    zip(): T[];
   }
 
   interface Map<K, V> {
@@ -56,6 +57,18 @@ if (!Array.prototype.skip) {
 if (!Array.prototype.take) {
   Array.prototype.take = function<T>(this: T[], count: number): T[] {
     return this.slice(0, count);
+  };
+}
+
+if (!Array.prototype.zip) {
+  Array.prototype.zip = function<U>(this: U[][]): U[][] {
+    if (this.length === 0) {
+      return [];
+    }
+    if (this[0].length === 0) {
+      return [[]];
+    }
+    return this[0].map((_, i) => this.map(subList => subList[i]));
   };
 }
 
