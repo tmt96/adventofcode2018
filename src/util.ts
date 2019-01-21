@@ -6,3 +6,10 @@ export function readFileToLines(inputPath: string): string[] {
     .toString()
     .split(/\n+/);
 }
+
+export function readInputForDay(day: number, isSample = false): string[] {
+  const inputPath = isSample
+    ? `./data/day${day}.txt`
+    : `./data/sample/day${day}.txt`;
+  return readFileToLines(inputPath);
+}
