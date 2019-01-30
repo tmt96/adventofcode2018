@@ -6,7 +6,9 @@
     "arrow-parens": false,
     "no-console": false,
     "indent": [true, "spaces", 4],
-    "interface-name": false
+    "interface-name": false,
+    "max-classes-per-file": false,
+    "variable-name": false
   },
   "rulesDirectory": []
 }

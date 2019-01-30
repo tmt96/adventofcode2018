@@ -1,30 +1,90 @@
 import "./collection";
 import * as util from "./util";
 
-const lines = util.readInputForDay(9);
-type Marble = number;
+class Marble {
+  public prev: Marble;
+  public next: Marble;
+  public readonly value: number;
 
-function putMarble(ring: Marble[], next: Marble, currentPos: number) {
-  if (next % 23 !== 0) {
-    const newPos = ((currentPos + 1) % ring.length) + 1;
-    ring.splice(newPos, 0, next);
-    return [0, newPos];
-  } else {
-    const posToRemove = (currentPos - 7 + ring.length) % ring.length;
-    const removedMarble = ring.splice(posToRemove, 1);
-    return [next + removedMarble[0]!, posToRemove % ring.length];
+  constructor(value: number) {
+    this.value = value;
+    this.prev = this;
+    this.next = this;
+  }
+
+  public getRight(step = 1): Marble {
+    return step === 0 ? this : this.next.getRight(step - 1);
+  }
+
+  public getLeft(step = 1): Marble {
+    return step === 0 ? this : this.prev.getLeft(step - 1);
   }
 }
 
-function gameHighestScore(playersCount: number, lastMarble: Marble) {
+class MarbleRing {
+  private _currentMarble: Marble;
+  private diameter: number;
+
+  public get currentMarble(): Marble {
+    return this._currentMarble;
+  }
+
+  constructor() {
+    this._currentMarble = new Marble(0);
+    this.diameter = 1;
+  }
+
+  public rotateClockwise(step: number) {
+    this._currentMarble = this._currentMarble.getRight(step);
+  }
+
+  public rotateCounterClockwise(step: number) {
+    this._currentMarble = this._currentMarble.getLeft(step);
+  }
+
+  public insertAndSetCurrent(value: number) {
+    const marble = new Marble(value);
+    this.setNeighbor(marble, this._currentMarble.next);
+    this.setNeighbor(this._currentMarble, marble);
+    this._currentMarble = marble;
+    this.diameter += 1;
+  }
+
+  public deleteAndReturnCurrent(): number {
+    const marble = this._currentMarble;
+    this.setNeighbor(this._currentMarble.prev, this._currentMarble.next);
+    this._currentMarble = this._currentMarble.next;
+    this.diameter -= 1;
+    return marble.value;
+  }
+
+  private setNeighbor(marble1: Marble, marble2: Marble) {
+    marble1.next = marble2;
+    marble2.prev = marble1;
+  }
+}
+
+const lines = util.readInputForDay(9);
+
+function playOneRound(ring: MarbleRing, next: number) {
+  if (next % 23 !== 0) {
+    ring.rotateClockwise(1);
+    ring.insertAndSetCurrent(next);
+    return 0;
+  } else {
+    ring.rotateCounterClockwise(7);
+    const removed = ring.deleteAndReturnCurrent();
+    return next + removed;
+  }
+}
+
+function gameHighestScore(playersCount: number, lastMarble: number) {
   const scores: number[] = new Array(playersCount).fill(0);
   let currentPlayer = 0;
-  let currentPos = 0;
-  const marbleRing: Marble[] = [0];
+  const marbleRing = new MarbleRing();
 
   for (let i = 0; i < lastMarble; i++) {
-    const [score, newPos] = putMarble(marbleRing, i + 1, currentPos);
-    currentPos = newPos;
+    const score = playOneRound(marbleRing, i + 1);
     scores[currentPlayer] += score;
     currentPlayer = (currentPlayer + 1) % scores.length;
   }
