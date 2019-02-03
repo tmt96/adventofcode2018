@@ -52,8 +52,8 @@ class MarbleRing {
 
   public deleteAndReturnCurrent(): number {
     const marble = this._currentMarble;
-    this.setNeighbor(this._currentMarble.prev, this._currentMarble.next);
-    this._currentMarble = this._currentMarble.next;
+    this.setNeighbor(marble.prev, marble.next);
+    this._currentMarble = marble.next;
     this.diameter -= 1;
     return marble.value;
   }

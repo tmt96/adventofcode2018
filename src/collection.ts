@@ -4,6 +4,8 @@ declare global {
   interface Array<T> {
     min(): T | undefined;
     max(): T | undefined;
+    minBy<U>(func: (val: T) => U): T | undefined;
+    maxBy<U>(func: (val: T) => U): T | undefined;
 
     append(item: T): T[];
     removeAll(item: T): T[];
@@ -33,6 +35,47 @@ if (!Array.prototype.min) {
 if (!Array.prototype.max) {
   Array.prototype.max = function<T>(this: T[]): T | undefined {
     return this.reduce((item, value) => (item > value ? item : value));
+  };
+}
+
+if (!Array.prototype.minBy) {
+  Array.prototype.minBy = function<T, U>(
+    this: T[],
+    func: (val: T) => U
+  ): T | undefined {
+    if (this.length === 0) {
+      return undefined;
+    }
+    let benchmarkValue: U | undefined;
+    let result: T | undefined;
+    for (const el of this) {
+      const val = func(el);
+      if (benchmarkValue === undefined || val < benchmarkValue) {
+        result = el;
+        benchmarkValue = val;
+      }
+    }
+    return result;
+  };
+}
+if (!Array.prototype.maxBy) {
+  Array.prototype.maxBy = function<T, U>(
+    this: T[],
+    func: (val: T) => U
+  ): T | undefined {
+    if (this.length === 0) {
+      return undefined;
+    }
+    let benchmarkValue: U | undefined;
+    let result: T | undefined;
+    for (const el of this) {
+      const val = func(el);
+      if (benchmarkValue === undefined || val > benchmarkValue) {
+        result = el;
+        benchmarkValue = val;
+      }
+    }
+    return result;
   };
 }
 
