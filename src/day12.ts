@@ -7,9 +7,7 @@ const PLANT = "#";
 const NO_PLANT = ".";
 
 const lines = util.readInputForDay(12, false);
-// console.log(lines);
 let config = lines[0].substring("initial state: ".length);
-// console.log(config);
 config =
   ".".repeat(ITER_COUNT + BUFFER) +
   config +
@@ -43,7 +41,7 @@ function getPlantSum(config: string): number {
 
 for (let i = 0; i < ITER_COUNT; i++) {
   config = spreadPlant(config, i);
-  console.log(getPlantSum(config));
+  // console.log(getPlantSum(config));
 }
 
 console.log(getPlantSum(config));
