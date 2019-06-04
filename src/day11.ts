@@ -118,7 +118,7 @@ function findSquareWithMaxPower(
   gridWidth: number,
   powerFromOriginMap: PowerMap
 ) {
-  let resultMap = new Map<string, number>();
+  const resultMap = new Map<string, number>();
 
   for (let i = 1; i <= Math.min(gridHeight, gridWidth); i++) {
     const areaPowerMap = calcAllAreaPowerLevels(
