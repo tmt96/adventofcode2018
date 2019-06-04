@@ -8,7 +8,7 @@ function getNextRecipes(
 }
 
 function part1(recipes: number): string {
-  let portionList = [3, 7];
+  const portionList = [3, 7];
   let firstIndex = 0;
   let secondIndex = 1;
   while (portionList.length < recipes + 10) {
@@ -22,7 +22,7 @@ function part1(recipes: number): string {
 }
 
 function part2(recipes: number): number {
-  let portionList = [3, 7];
+  const portionList = [3, 7];
   let firstIndex = 0;
   let secondIndex = 1;
   const recipeStr = recipes + "";
