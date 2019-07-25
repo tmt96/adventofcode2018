@@ -1,11 +1,27 @@
+import "./collection";
 import * as util from "./util";
 
 type Registers = [number, number, number, number];
-type Opcode = (a: number, b: number, c: number, regs: Registers) => Registers;
+type Operation = (
+  a: number,
+  b: number,
+  c: number,
+  regs: Registers
+) => Registers;
+
+interface Instruction {
+  opcode: number;
+  input_1: number;
+  input_2: number;
+  output: number;
+}
 
 const get = (i: number, regs: Registers): number => regs[i];
-const set = (i: number, val: number, regs: Registers): Registers =>
-  regs.splice(i, 1, val) as Registers;
+const set = (i: number, val: number, regs: Registers) => {
+  const result = [...regs];
+  result[i] = val;
+  return result as Registers;
+};
 
 // opcode helper
 const add = (a: number, b: number) => a + b;
@@ -25,7 +41,7 @@ const instii = (
   b: number,
   c: number,
   regs: Registers
-): Registers => set(c, f(a, b), regs);
+) => set(c, f(a, b), regs);
 const instir = (f: (a: number, b: number) => number) => {
   return (a: number, b: number, c: number, regs: Registers) =>
     instii(f, a, get(b, regs), c, regs);
@@ -57,7 +73,7 @@ const eqir = instir(eq);
 const eqri = instri(eq);
 const eqrr = instrr(eq);
 
-const opcodes: Opcode[] = [
+const opcodes: Operation[] = [
   addr,
   addi,
   mulr,
@@ -77,17 +93,44 @@ const opcodes: Opcode[] = [
 ];
 
 const couldBeOpcode = (
-  inst: Opcode,
+  op: Operation,
   before: Registers,
-  args: number[],
+  args: Instruction,
   after: Registers
-) => inst(args[1], args[2], args[3], before).equal(after);
+) => op(args.input_1, args.input_2, args.output, before).equal(after);
 const couldBeAtLeastKOpcodes = (
   before: Registers,
-  args: number[],
+  args: Instruction,
   after: Registers,
   k: number
 ) =>
   opcodes.filter(inst => couldBeOpcode(inst, before, args, after)).length >= k;
 
+const readRegisters = (input: string) =>
+  (input.match(/\d+/g) || []).map(Number) as Registers;
+const readInstruction = (input: string) => {
+  const readResult = (input.match(/\d+/g) || []).map(Number);
+  return {
+    opcode: readResult[0],
+    input_1: readResult[1],
+    input_2: readResult[2],
+    output: readResult[3]
+  } as Instruction;
+};
+
+function part1(lines: string[]) {
+  let count = 0;
+  for (let i = 0; i < lines.length && lines[i].startsWith("Before"); i += 3) {
+    const before = readRegisters(lines[i]);
+    const inst = readInstruction(lines[i + 1]);
+    const after = readRegisters(lines[i + 2]);
+    if (couldBeAtLeastKOpcodes(before, inst, after, 3)) {
+      console.log(i);
+      count += 1;
+    }
+  }
+  return count;
+}
+
 const lines = util.readInputForDay(16);
+console.log(part1(lines));
