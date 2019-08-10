@@ -7,6 +7,7 @@ declare global {
     minBy<U>(func: (val: T) => U): T | undefined;
     maxBy<U>(func: (val: T) => U): T | undefined;
 
+    includes(item: T): boolean;
     append(item: T): T[];
     removeAll(item: T): T[];
     skip(count: number): T[];
@@ -77,6 +78,12 @@ if (!Array.prototype.maxBy) {
       }
     }
     return result;
+  };
+}
+
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function<T>(this: T[], item: T): boolean {
+    return this.indexOf(item) !== -1;
   };
 }
 

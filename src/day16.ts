@@ -98,13 +98,19 @@ const couldBeOpcode = (
   args: Instruction,
   after: Registers
 ) => op(args.input_1, args.input_2, args.output, before).equal(after);
+
+const getPossibleOpcodes = (
+  before: Registers,
+  args: Instruction,
+  after: Registers
+) => opcodes.filter(inst => couldBeOpcode(inst, before, args, after));
+
 const couldBeAtLeastKOpcodes = (
   before: Registers,
   args: Instruction,
   after: Registers,
   k: number
-) =>
-  opcodes.filter(inst => couldBeOpcode(inst, before, args, after)).length >= k;
+) => getPossibleOpcodes(before, args, after).length >= k;
 
 const readRegisters = (input: string) =>
   (input.match(/\d+/g) || []).map(Number) as Registers;
@@ -125,12 +131,85 @@ function part1(lines: string[]) {
     const inst = readInstruction(lines[i + 1]);
     const after = readRegisters(lines[i + 2]);
     if (couldBeAtLeastKOpcodes(before, inst, after, 3)) {
-      console.log(i);
       count += 1;
     }
   }
   return count;
 }
 
+function updateOpcodeMap(
+  before: Registers,
+  inst: Instruction,
+  after: Registers,
+  opcodeMap: Map<number, Operation[]>
+) {
+  const possibleOpcodes = getPossibleOpcodes(before, inst, after);
+  const currentOpcodes = opcodeMap.get(inst.opcode)!;
+  opcodeMap.set(
+    inst.opcode,
+    currentOpcodes.filter(op => couldBeOpcode(op, before, inst, after))
+  );
+}
+
+function createOpcodeMap(lines: string[]) {
+  const opcodeMap = new Map<number, Operation[]>();
+  for (let i = 0; i < opcodes.length; i++) {
+    opcodeMap.set(i, opcodes);
+  }
+  const result = new Map<number, Operation>();
+
+  for (let i = 0; i < lines.length && lines[i].startsWith("Before"); i += 3) {
+    const before = readRegisters(lines[i]);
+    const inst = readInstruction(lines[i + 1]);
+    const after = readRegisters(lines[i + 2]);
+    updateOpcodeMap(before, inst, after, opcodeMap);
+  }
+
+  for (let i = 0; i < opcodes.length; i++) {
+    for (const [num, opcodeList] of opcodeMap.entries()) {
+      if (opcodeList.length === 1) {
+        const opcode = opcodeList[0]!;
+        result.set(num, opcode);
+        for (const [otherNum, otherOpcodes] of opcodeMap.entries()) {
+          const index = otherOpcodes.indexOf(opcode);
+          if (index !== -1) {
+            otherOpcodes.splice(index, 1);
+            opcodeMap.set(otherNum, otherOpcodes);
+          }
+        }
+        opcodeMap.delete(num);
+
+        break;
+      }
+    }
+  }
+
+  return result;
+}
+
+function part2(lines: string[]) {
+  const opcodeMap = createOpcodeMap(lines);
+  let i = 0;
+  let registers: Registers = [0, 0, 0, 0];
+  for (; i < lines.length && lines[i].startsWith("Before"); i += 3) {
+    continue;
+  }
+
+  for (; i < lines.length; i++) {
+    if (lines[i] === "") {
+      break;
+    }
+    const inst = readInstruction(lines[i]);
+    registers = opcodeMap.get(inst.opcode)!(
+      inst.input_1,
+      inst.input_2,
+      inst.output,
+      registers
+    );
+  }
+  return registers[0];
+}
+
 const lines = util.readInputForDay(16);
 console.log(part1(lines));
+console.log(part2(lines));
