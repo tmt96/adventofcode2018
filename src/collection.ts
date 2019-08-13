@@ -7,11 +7,13 @@ declare global {
     minBy<U>(func: (val: T) => U): T | undefined;
     maxBy<U>(func: (val: T) => U): T | undefined;
 
+    includes(item: T): boolean;
     append(item: T): T[];
     removeAll(item: T): T[];
     skip(count: number): T[];
     take(count: number): T[];
     zip(): T[];
+    equal(other: T[]): boolean;
   }
 
   interface Map<K, V> {
@@ -79,6 +81,12 @@ if (!Array.prototype.maxBy) {
   };
 }
 
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function<T>(this: T[], item: T): boolean {
+    return this.indexOf(item) !== -1;
+  };
+}
+
 if (!Array.prototype.append) {
   Array.prototype.append = function<T>(this: T[], item: T): T[] {
     return this.concat([item]);
@@ -112,6 +120,12 @@ if (!Array.prototype.zip) {
       return [[]];
     }
     return this[0].map((_, i) => this.map(subList => subList[i]));
+  };
+}
+
+if (!Array.prototype.equal) {
+  Array.prototype.equal = function<T>(this: T[], other: T[]): boolean {
+    return [this, other].zip().every(pair => pair[0] === pair[1]);
   };
 }
 
